@@ -1,4 +1,4 @@
-import { buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -21,16 +21,13 @@ export default function Home() {
           социальных сетях и многое другое.
         </p>
 
-        <Link
-          className={buttonVariants({
-            size: 'lg',
-            className: 'mt-5',
-          })}
-          href='/dashboard'
-          target='_blank'>
-          Начать
-          <ArrowRight className='ml-2 h-5 w-5' />
-        </Link>
+        <Button asChild className="mt-5" size={"lg"}>
+          <Link
+            href='/admin'
+            target='_blank'>
+            Начать
+            <ArrowRight className='ml-2 h-5 w-5' />
+          </Link></Button>
       </div>
 
       {/* value proposition section */}

@@ -24,22 +24,31 @@ export const handleError = (error: unknown) => {
   }
 };
 
-interface NodeParams {
+interface CreateNodeInput {
   label: string;
+  type: "default" | "node-with-toolbar";
+  position: XYPosition,
   onChange: (id: string, value: string) => void;
   onDelete: (id: string) => void;
-  sourcePosition: Position
+  sourcePosition?: Position;
+  targetPosition?: Position;
+
 }
 
-export const createNode = (type: string, position: XYPosition, params: NodeParams): CustomNode => {
+export const createNode = (params: CreateNodeInput): CustomNode => {
   const id = randomUUID();
-  const { label, onChange, onDelete } = params;
+  const { label, onChange, onDelete, type = 'node-with-toolbar', position } = params;
 
   return {
     id,
     type,
     position,
-    data: params,
+    data: {
+      label: label,
+      onChange,
+      onDelete, 
+      sourcePosition: params.sourcePosition
+    },
     sourcePosition: Position.Right,
     targetPosition: Position.Left,
   };

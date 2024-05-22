@@ -14,7 +14,7 @@ import ReactFlow, { Background, BackgroundVariant, Controls, MiniMap, OnConnect,
 
 
 export default function EditorPage() {
-  const {user} = useUser();
+  const { user } = useUser();
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes] = useAtom(nodesAtom);
   const [edges, setEdges] = useAtom(edgesAtom);
@@ -38,7 +38,9 @@ export default function EditorPage() {
         y: event.clientY,
       });
 
-      const newNode = createNode(type, position, '', handleNodeChange, handleNodeDelete);
+      const newNode = createNode(type, position, {
+        label: "Write here",
+      });
       setNodes((nds) => nds.concat(newNode));
     },
     [reactFlowInstance, setNodes]
@@ -101,28 +103,26 @@ export default function EditorPage() {
 
   return (
     <div className="w-full h-full">
-      <ReactFlowProvider>
-        <div className="reactflow-wrapper w-full h-screen" ref={reactFlowWrapper}>
-          <ReactFlow
-            nodeTypes={nodeTypes}
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={handleNodesChange}
-            onEdgesChange={handleEdgesChange}
-            onConnect={onConnect}
-            onInit={setReactFlowInstance}
-            onDrop={onDrop}
-            onDragOver={onDragOver}
-            fitView
-          >
-            <Controls />
-            <Blocks />
-            <Toolbar />
-            <MiniMap nodeStrokeWidth={3} zoomable pannable />
-            <Background color="#ccc" variant={BackgroundVariant.Dots} />
-          </ReactFlow>
-        </div>
-      </ReactFlowProvider>
-    </div>
+      <div className="reactflow-wrapper w-full h-screen" ref={reactFlowWrapper}>
+        <ReactFlow
+          nodeTypes={nodeTypes}
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={handleNodesChange}
+          onEdgesChange={handleEdgesChange}
+          onConnect={onConnect}
+          onInit={setReactFlowInstance}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          fitView
+        >
+          <Controls />
+          <Blocks />
+          <Toolbar />
+          <MiniMap nodeStrokeWidth={3} zoomable pannable />
+          <Background color="#ccc" variant={BackgroundVariant.Dots} />
+        </ReactFlow>
+      </div>
+    </div >
   )
 }
