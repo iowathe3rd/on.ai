@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { DragEvent, useState } from "react";
-import { Panel } from "reactflow";
+import { DragEvent, useCallback, useState } from "react";
+import { Panel, useReactFlow } from "reactflow";
 import { Button } from "../ui/button";
 import { Menubar } from "../ui/menubar";
 
@@ -18,13 +18,19 @@ const tools: Tool[] = [
 
 export default function Blocks() {
   const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
+  const { setViewport, zoomIn, zoomOut } = useReactFlow();
+
+  const handleTransform = useCallback(() => {
+    setViewport({ x: 0, y: 0, zoom: 1 }, { duration: 800 });
+  }, [setViewport]);
+
 
   const handleToolClick = (tool: Tool) => {
     setSelectedTool(tool);
   };
 
   const onDragStart = (event: DragEvent<HTMLButtonElement>) => {
-    event.dataTransfer.setData('application/reactflow', "default");
+    event.dataTransfer.setData('application/reactflow', "node-with-toolbar");
     event.dataTransfer.effectAllowed = 'move';
   };
 
@@ -39,6 +45,9 @@ export default function Blocks() {
       </Menubar>
       <Menubar>
         <Button variant={"ghost"} size={"sm"} onDragStart={(event) => onDragStart(event)} draggable>
+          <Image width={20} height={20} src={"/icons/plus.svg"} alt={"add"} />
+        </Button>
+        <Button variant={"ghost"} size={"sm"} onClick={handleTransform} draggable>
           <Image width={20} height={20} src={"/icons/plus.svg"} alt={"add"} />
         </Button>
       </Menubar>

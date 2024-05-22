@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import { Node, Position } from "reactflow";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -19,4 +20,24 @@ export const handleError = (error: unknown) => {
     console.error(error);
     throw new Error(`Unknown error: ${JSON.stringify(error)}`);
   }
+};
+
+let id = 0;
+const getId = () => `dndnode_${id++}`;
+
+export const createNode = (
+  type: string,
+  position: { x: number; y: number },
+  label: string,
+  onChange: (id: string, value: string) => void,
+  onDelete: (id: string) => void
+): Node => {
+  return {
+    id: getId(),
+    type,
+    position,
+    data: { label, onChange, onDelete },
+    sourcePosition: Position.Right,
+    targetPosition: Position.Left,
+  };
 };
