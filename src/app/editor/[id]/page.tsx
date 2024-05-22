@@ -3,15 +3,18 @@
 import Blocks from "@/components/editor/Blocks";
 import { nodeTypes } from "@/components/editor/Node";
 import Toolbar from "@/components/editor/Toolbar";
-import { LOCAL_STORAGE_KEY, loadStateFromLocalStorage, saveStateToDatabase, saveStateToLocalStorage, useEdgeChangeHandler, useNodeChangeHandler } from "@/lib/editor/handlers";
+import { saveDiagram } from "@/lib/actions/editor.actions";
+import { LOCAL_STORAGE_KEY, loadStateFromLocalStorage, saveStateToLocalStorage, useEdgeChangeHandler, useNodeChangeHandler } from "@/lib/editor/handlers";
 import { createNode } from "@/lib/utils";
 import { edgesAtom, nodesAtom, reactFlowInstanceAtom } from "@/store/editor";
+import { useUser } from "@clerk/nextjs";
 import { useAtom } from "jotai";
 import { DragEventHandler, useCallback, useEffect, useRef } from "react";
 import ReactFlow, { Background, BackgroundVariant, Controls, MiniMap, OnConnect, ReactFlowProvider, addEdge } from "reactflow";
 
 
 export default function EditorPage() {
+  const {user} = useUser();
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes] = useAtom(nodesAtom);
   const [edges, setEdges] = useAtom(edgesAtom);
@@ -78,7 +81,11 @@ export default function EditorPage() {
   useEffect(() => {
     const handleBeforeUnload = async (event: BeforeUnloadEvent) => {
       const state = { nodes, edges };
-      await saveStateToDatabase(state);
+      await saveDiagram({
+        name: "",
+        data: state,
+        userId: user!.id
+      });
       const confirmationMessage = 'Are you sure you want to leave?';
       event.returnValue = confirmationMessage; // Gecko, Trident, Chrome 34+
       return confirmationMessage; // Gecko, WebKit, Chrome <34

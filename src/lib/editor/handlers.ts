@@ -1,4 +1,5 @@
 import { edgeChangesAtom, edgesAtom, nodeChangesAtom, nodesAtom } from '@/store/editor';
+import { CustomNode } from '@/types';
 import { useAtom } from 'jotai';
 import { EdgeChange, Node, NodeChange, applyEdgeChanges, applyNodeChanges } from 'reactflow';
 
@@ -7,11 +8,14 @@ export const useNodeChangeHandler = () => {
   const [, setNodeChanges] = useAtom(nodeChangesAtom);
 
   return (changes: NodeChange[]) => {
-    setNodes((nodes: Node[]) => applyNodeChanges(changes, nodes));
+    setNodes((prevNodes) => {
+      // Применяем изменения к узлам и преобразуем их в нужный тип
+      const updatedNodes = applyNodeChanges(changes, prevNodes) as CustomNode[];
+      return updatedNodes;
+    });
     setNodeChanges(changes);
   };
 };
-
 export const useEdgeChangeHandler = () => {
   const [, setEdges] = useAtom(edgesAtom);
   const [, setEdgeChanges] = useAtom(edgeChangesAtom);

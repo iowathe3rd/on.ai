@@ -1,3 +1,4 @@
+import { CustomNode } from "@/types";
 import { clsx, type ClassValue } from "clsx";
 import { Node, Position } from "reactflow";
 import { twMerge } from "tailwind-merge";
@@ -31,7 +32,7 @@ export const createNode = (
   label: string,
   onChange: (id: string, value: string) => void,
   onDelete: (id: string) => void
-): Node => {
+): CustomNode => {
   return {
     id: getId(),
     type,

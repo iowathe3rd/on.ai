@@ -1,11 +1,12 @@
+import { CustomNode } from '@/types';
 import { atom } from 'jotai';
-import { Edge, EdgeChange, Node, NodeChange, ReactFlowInstance } from 'reactflow';
+import { Edge, EdgeChange, NodeChange, ReactFlowInstance } from 'reactflow';
 
-const initialNodes: Node[] = [];
+const initialNodes: CustomNode[] = [];
 
 const initialEdges: Edge[] = [];
 
-export const nodesAtom = atom<Node[]>(initialNodes);
+export const nodesAtom = atom<CustomNode[]>(initialNodes);
 export const edgesAtom = atom<Edge[]>(initialEdges);
 
 export const reactFlowInstanceAtom = atom<ReactFlowInstance | null>(null);
