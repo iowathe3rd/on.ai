@@ -13,8 +13,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        String    @id @default(uuid())
+  clerkId   String    @unique
+  email     String    @unique
+  username  String    @unique
+  firstName String?
+  lastName  String?
+  diagrams  Diagram[] // Связь с диаграммами пользователя
+}
+
+// Определение модели для диаграммы
 model Diagram {
-  id   Int    @id @default(autoincrement())
-  name String
-  data Json
+  id     String @id @default(uuid())
+  name   String
+  data   Json
+  userId String // Внешний ключ для связи с пользователем
+  user   User   @relation(fields: [userId], references: [id])
 }

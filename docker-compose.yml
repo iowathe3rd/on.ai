@@ -4,11 +4,7 @@ services:
   db:
     image: postgres:latest
     restart: always
-    env_file: ".env.local"
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    env_file: "./.env.local"
     ports:
       - "5432:5432"
     volumes:
