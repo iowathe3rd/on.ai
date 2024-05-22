@@ -7,7 +7,7 @@ type navLinks = Array<{
 export const navLinks: navLinks = [
   {
     label: 'Новый бот',
-    route: '/admin/new',
+    route: '/editor',
     icon: '/icons/adjustments-horizonal.svg',
   },
 ];

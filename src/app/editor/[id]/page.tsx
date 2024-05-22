@@ -102,6 +102,7 @@ export default function EditorPage() {
 
 
   return (
+    <ReactFlowProvider>
     <div className="w-full h-full">
       <div className="reactflow-wrapper w-full h-screen" ref={reactFlowWrapper}>
         <ReactFlow
@@ -124,5 +125,6 @@ export default function EditorPage() {
         </ReactFlow>
       </div>
     </div >
+    </ReactFlowProvider>
   )
 }
