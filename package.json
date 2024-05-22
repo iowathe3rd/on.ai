@@ -6,13 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prisma:migrate": "dotenv -e .env.local prisma migrate dev",
+    "prisma:studio": "dotenv -e .env.local prisma studio",
+    "prisma:validate": "dotenv -e .env.local prisma validate",
+    "prisma:format": "dotenv -e .env.local prisma format"
   },
   "dependencies": {
     "@clerk/nextjs": "^5.1.0",
     "@radix-ui/react-slot": "^1.0.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "dotenv": "^16.4.5",
     "lucide-react": "^0.379.0",
     "next": "14.2.3",
     "react": "^18",
