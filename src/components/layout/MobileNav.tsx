@@ -41,7 +41,7 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                     }
                     className='flex items-center w-full font-semibold text-green-600'
                     href='/sign-up'>
-                    Get started
+                    Начать
                     <ArrowRight className='ml-2 h-5 w-5' />
                   </Link>
                 </li>
@@ -53,31 +53,21 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                     }
                     className='flex items-center w-full font-semibold'
                     href='/sign-in'>
-                    Sign in
+                    Войти
                   </Link>
                 </li>
                 <li className='my-3 h-px w-full bg-gray-300' />
-                <li>
-                  <Link
-                    onClick={() =>
-                      closeOnCurrent('/pricing')
-                    }
-                    className='flex items-center w-full font-semibold'
-                    href='/pricing'>
-                    Pricing
-                  </Link>
-                </li>
               </>
             ) : (
               <>
                 <li>
                   <Link
                     onClick={() =>
-                      closeOnCurrent('/dashboard')
+                      closeOnCurrent('/admin')
                     }
                     className='flex items-center w-full font-semibold'
-                    href='/dashboard'>
-                    Dashboard
+                    href='/admin'>
+                    Админ
                   </Link>
                 </li>
                 <li className='my-3 h-px w-full bg-gray-300' />
@@ -85,7 +75,7 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                   <Link
                     className='flex items-center w-full font-semibold'
                     href='/sign-out'>
-                    Sign out
+                    Выйти
                   </Link>
                 </li>
               </>

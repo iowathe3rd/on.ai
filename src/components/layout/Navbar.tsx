@@ -45,7 +45,7 @@ const Navbar = () => {
             ) : (
               <>
                 <Link
-                  href='/dashboard'
+                  href='/admin'
                   className={buttonVariants({
                     variant: 'ghost',
                     size: 'sm',
