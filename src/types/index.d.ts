@@ -1,4 +1,4 @@
-import { Position, XYPosition } from "reactflow";
+import { Node, Position, XYPosition } from "reactflow";
 
 declare interface CreateUserParams {
   clerkId: string,

@@ -1,6 +1,7 @@
 import { CustomNode } from "@/types";
 import { clsx, type ClassValue } from "clsx";
-import { Node, Position } from "reactflow";
+import { randomUUID } from "crypto";
+import { Position, XYPosition } from "reactflow";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -23,21 +24,22 @@ export const handleError = (error: unknown) => {
   }
 };
 
-let id = 0;
-const getId = () => `dndnode_${id++}`;
+interface NodeParams {
+  label: string;
+  onChange: (id: string, value: string) => void;
+  onDelete: (id: string) => void;
+  sourcePosition: Position
+}
 
-export const createNode = (
-  type: string,
-  position: { x: number; y: number },
-  label: string,
-  onChange: (id: string, value: string) => void,
-  onDelete: (id: string) => void
-): CustomNode => {
+export const createNode = (type: string, position: XYPosition, params: NodeParams): CustomNode => {
+  const id = randomUUID();
+  const { label, onChange, onDelete } = params;
+
   return {
-    id: getId(),
+    id,
     type,
     position,
-    data: { label, onChange, onDelete },
+    data: params,
     sourcePosition: Position.Right,
     targetPosition: Position.Left,
   };
