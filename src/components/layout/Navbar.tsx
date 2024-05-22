@@ -1,11 +1,13 @@
+"use client";
 
-import { buttonVariants } from '@/components/ui/button'
-import { ArrowRight } from 'lucide-react'
-import Link from 'next/link'
-import MobileNav from './MobileNav'
-import UserAccountNav from './UserAccountNav'
+import { buttonVariants } from '@/components/ui/button';
+import { useUser } from '@clerk/nextjs';
+import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import MobileNav from './MobileNav';
 
 const Navbar = () => {
+  const { isSignedIn } = useUser()
 
   return (
     <nav className='sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all'>
@@ -14,36 +16,31 @@ const Navbar = () => {
           <Link
             href='/'
             className='flex z-40 font-semibold'>
-            <span>quill.</span>
+            <span className='text-blue-600'>ON.AI</span>
           </Link>
 
-          <MobileNav isAuth={!!user} />
+          <MobileNav isAuth={!!isSignedIn} />
 
           <div className='hidden items-center space-x-4 sm:flex'>
-            {!user ? (
+            {!isSignedIn ? (
               <>
                 <Link
-                  href='/pricing'
+                  href={"/sign-in"}
                   className={buttonVariants({
                     variant: 'ghost',
                     size: 'sm',
                   })}>
-                  Pricing
+
+                  Войти
                 </Link>
-                <LoginLink
-                  className={buttonVariants({
-                    variant: 'ghost',
-                    size: 'sm',
-                  })}>
-                  Sign in
-                </LoginLink>
-                <RegisterLink
+                <Link
+                  href={"/sign-up"}
                   className={buttonVariants({
                     size: 'sm',
                   })}>
-                  Get started{' '}
+                  Начать{' '}
                   <ArrowRight className='ml-1.5 h-5 w-5' />
-                </RegisterLink>
+                </Link>
               </>
             ) : (
               <>
@@ -53,18 +50,8 @@ const Navbar = () => {
                     variant: 'ghost',
                     size: 'sm',
                   })}>
-                  Dashboard
+                  Админ-панель
                 </Link>
-
-                <UserAccountNav
-                  name={
-                    !user.given_name || !user.family_name
-                      ? 'Your Account'
-                      : `${user.given_name} ${user.family_name}`
-                  }
-                  email={user.email ?? ''}
-                  imageUrl={user.picture ?? ''}
-                />
               </>
             )}
           </div>
