@@ -1,62 +1,51 @@
-import {
-	edgeChangesAtom,
-	edgesAtom,
-	nodeChangesAtom,
-	nodesAtom,
-} from "@/store/editor";
 import { CustomNode } from "@/types";
-import { useAtom } from "jotai";
-import {
-	applyEdgeChanges,
-	applyNodeChanges,
-	EdgeChange,
-	NodeChange,
-} from "reactflow";
+import { nodesAtom, editorStore, copiedNodeAtom } from "@/store/editor";
+import crypto from "crypto";
 
-export const useNodeChangeHandler = () => {
-	const [, setNodes] = useAtom(nodesAtom);
-	const [, setNodeChanges] = useAtom(nodeChangesAtom);
-
-	return (changes: NodeChange[]) => {
-		setNodes((prevNodes) => {
-			// Применяем изменения к узлам и преобразуем их в нужный тип
-			return applyNodeChanges(changes, prevNodes) as CustomNode[];
-		});
-		setNodeChanges(changes);
-	};
-};
-export const useEdgeChangeHandler = () => {
-	const [, setEdges] = useAtom(edgesAtom);
-	const [, setEdgeChanges] = useAtom(edgeChangesAtom);
-
-	return (changes: EdgeChange[]) => {
-		setEdges((edges) => applyEdgeChanges(changes, edges));
-		setEdgeChanges(changes);
-	};
-};
-
-export const LOCAL_STORAGE_KEY = "editor_save";
-
-export const saveStateToLocalStorage = (key: string, state: any) => {
-	localStorage.setItem(key, JSON.stringify(state));
-};
-
-export const loadStateFromLocalStorage = (key: string) => {
-	const state = localStorage.getItem(key);
-	return state ? JSON.parse(state) : null;
-};
-
-export const saveStateToDatabase = async (state: any) => {
-	try {
-		const response = await fetch("/api/saveState", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
+export const createNode = (
+	data: Omit<CustomNode, "id" | "onDelete" | "onChange">
+): void => {
+	const id = crypto.randomUUID();
+	editorStore.set(nodesAtom, (prevNodes: CustomNode[]) =>
+		prevNodes.concat({
+			...data,
+			id,
+			data: {
+				label: "Начните писать",
 			},
-			body: JSON.stringify(state),
-		});
-		return await response.json();
-	} catch (error) {
-		console.error("Error saving state to database:", error);
+			type: "node-with-toolbar",
+			onDelete: deleteNode,
+			onChange: changeNode,
+		})
+	);
+};
+
+export const deleteNode = (id: string): void => {
+	editorStore.set(nodesAtom, (nds) => nds.filter((node) => node.id !== id));
+};
+
+export const changeNode = (id: string, value: string): void => {
+	editorStore.set(nodesAtom, (nds) =>
+		nds.map((node) =>
+			node.id === id ? { ...node, data: { ...node.data, label: value } } : node
+		)
+	);
+};
+
+export const copyNode = (id: string) => {
+	const nodes = editorStore.get(nodesAtom);
+	const nodeToCopy = nodes.find((node) => node.id === id);
+	editorStore.set(
+		copiedNodeAtom,
+		nodeToCopy ? { ...nodeToCopy, id: crypto.randomUUID() } : null
+	);
+};
+
+export const pasteNode = (position: { x: number; y: number }) => {
+	const copiedNode = editorStore.get(copiedNodeAtom);
+	if (copiedNode) {
+		const newNode = { ...copiedNode, position };
+		editorStore.set(nodesAtom, (nodes) => [...nodes, newNode]);
+		editorStore.set(copiedNodeAtom, null); // Clear the buffer after pasting
 	}
 };

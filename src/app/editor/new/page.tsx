@@ -24,7 +24,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { createDiagram } from "@/lib/actions/editor.actions";
 import { useUser } from "@clerk/nextjs";
-import {redirect} from "next/navigation";
 
 const formSchema = z.object({
 	name: z.string().min(2).max(50),
@@ -45,7 +44,7 @@ export default function NewDiagram() {
 			// Вызываем функцию создания диаграммы, передавая в неё данные из формы
 			const diagram = await createDiagram({
 				name: values.name,
-				clerkId: user!.id
+				clerkId: user!.id,
 			});
 			console.log("Диаграмма успешно создана:", diagram);
 		} catch (error) {

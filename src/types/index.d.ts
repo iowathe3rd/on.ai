@@ -1,4 +1,4 @@
-import { Edge, Node, Position, XYPosition } from "reactflow";
+import { Edge, Node } from "reactflow";
 
 declare interface CreateUserParams {
 	clerkId: string;
@@ -10,11 +10,12 @@ declare interface CreateUserParams {
 
 declare interface NodeData {
 	label: string;
-	onChange: (id: string, value: string) => void;
-	onDelete: (id: string) => void;
 }
 
-declare interface CustomNode extends Node<NodeData, "node-with-toolbar"> {}
+declare interface CustomNode extends Node<NodeData, "node-with-toolbar"> {
+	onDelete: (id: string) => void;
+	onChange: (id: string, value: string) => void;
+}
 
 // Интерфейс для рёбер
 declare interface CustomEdge extends Edge {

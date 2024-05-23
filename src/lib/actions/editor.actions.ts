@@ -2,8 +2,8 @@
 import { EditorState } from "@/types";
 import prisma from "../db";
 import { handleError } from "../utils";
-import {Diagram} from "@prisma/client";
-import {redirect} from "next/navigation";
+import { Diagram } from "@prisma/client";
+import { redirect } from "next/navigation";
 
 type UpdateDiagramInput = {
 	data: EditorState;
@@ -13,18 +13,18 @@ type UpdateDiagramInput = {
 
 type CreateDiagramInput = Omit<UpdateDiagramInput, "data">;
 
-export async function createDiagram(input: CreateDiagramInput){
+export async function createDiagram(input: CreateDiagramInput) {
 	let diagram;
 	try {
 		const user = await prisma.user.findUnique({
 			where: {
-				clerkId: input.clerkId
-			}
-		})
-		if(!user) {
-			throw Error("User not found");
+				clerkId: input.clerkId,
+			},
+		});
+		if (!user) {
+			return Error("User not found");
 		}
-		diagram =  await prisma.diagram.create({
+		diagram = await prisma.diagram.create({
 			data: {
 				name: input.name,
 				userId: user.id,
@@ -37,10 +37,11 @@ export async function createDiagram(input: CreateDiagramInput){
 		handleError(error);
 	}
 	redirect(`/editor/${diagram!.id}`);
-
 }
 
-export async function updateDiagram(input: UpdateDiagramInput): Promise<Diagram | undefined> {
+export async function updateDiagram(
+	input: UpdateDiagramInput
+): Promise<Diagram | undefined> {
 	try {
 		// Создаем новую диаграмму в базе данных
 		// Возвращаем результат сохранения
@@ -50,8 +51,8 @@ export async function updateDiagram(input: UpdateDiagramInput): Promise<Diagram 
 				data: JSON.stringify(input.data),
 				user: {
 					connect: {
-						clerkId: input.clerkId
-					}
+						clerkId: input.clerkId,
+					},
 				},
 			},
 		});

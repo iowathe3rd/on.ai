@@ -1,3 +1,5 @@
+"use client";
+
 import {
 	Menubar,
 	MenubarContent,
@@ -9,41 +11,63 @@ import {
 } from "@/components/ui/menubar";
 import { cn } from "@/lib/utils";
 import { Panel } from "reactflow";
+import { updateDiagram } from "@/lib/actions/editor.actions";
+import { edgesAtom, editorStore, nodesAtom } from "@/store/editor";
+import { useUser } from "@clerk/nextjs";
 
 interface Actions {
 	name: string;
 	shortcut?: string;
 	color?: string;
+	handler: <T>(data?: T) => void;
 }
 
 interface ActionsGroup {
 	title: string;
 	tools: Actions[];
 }
-const actions: ActionsGroup[] = [
-	{
-		title: "File",
-		tools: [
-			{ name: "Save", shortcut: "⌘S" },
-			{ name: "Export", shortcut: "⌘ shift S" },
-			{ name: "Save & Exit", shortcut: "⌘ shift S" },
-			{ name: "Exit", shortcut: "⌘ shift S", color: "red !important" },
-		],
-	},
-	{
-		title: "Edit",
-		tools: [
-			{ name: "Undo", shortcut: "⌘Z" },
-			{ name: "Redo", shortcut: "⌘Y" },
-			{ name: "Cut", shortcut: "⌘X" },
-			{ name: "Copy", shortcut: "⌘C" },
-			{ name: "Paste", shortcut: "⌘V" },
-			{ name: "Delete", shortcut: "⌫" },
-		],
-	},
-];
 
 export default function Toolbar() {
+	const { user } = useUser();
+	const state = {
+		nodes: editorStore.get(nodesAtom),
+		edges: editorStore.get(edgesAtom),
+	};
+
+	const saveHandler = async () => {
+		await updateDiagram({
+			name: "",
+			data: state,
+			clerkId: user!.id,
+		});
+	};
+	const actions: ActionsGroup[] = [
+		{
+			title: "File",
+			tools: [
+				{ name: "Save", shortcut: "⌘S", handler: saveHandler },
+				{ name: "Export", shortcut: "⌘ shift S", handler: () => {} },
+				{ name: "Save & Exit", shortcut: "⌘ shift S", handler: () => {} },
+				{
+					name: "Exit",
+					shortcut: "⌘ shift S",
+					color: "red !important",
+					handler: () => {},
+				},
+			],
+		},
+		{
+			title: "Edit",
+			tools: [
+				{ name: "Undo", shortcut: "⌘Z", handler: () => {} },
+				{ name: "Redo", shortcut: "⌘Y", handler: () => {} },
+				{ name: "Cut", shortcut: "⌘X", handler: () => {} },
+				{ name: "Copy", shortcut: "⌘C", handler: () => {} },
+				{ name: "Paste", shortcut: "⌘V", handler: () => {} },
+				{ name: "Delete", shortcut: "⌫", handler: () => {} },
+			],
+		},
+	];
 	return (
 		<Panel position={"top-left"}>
 			<Menubar>
@@ -52,7 +76,11 @@ export default function Toolbar() {
 						<MenubarTrigger>{toolGroup.title}</MenubarTrigger>
 						<MenubarContent>
 							{toolGroup.tools.map((tool, index) => (
-								<MenubarItem key={index} className={cn(`bg-${tool.color}`)}>
+								<MenubarItem
+									key={index}
+									className={cn(`bg-${tool.color}`)}
+									onClick={() => tool.handler()}
+								>
 									{tool.name}{" "}
 									{tool.shortcut && (
 										<MenubarShortcut>{tool.shortcut}</MenubarShortcut>

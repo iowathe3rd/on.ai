@@ -27,7 +27,7 @@ export async function getUserById(userId: string) {
 	try {
 		const user = await prisma.user.findUnique({ where: { clerkId: userId } });
 
-		if (!user) throw new Error("User not found");
+		if (!user) return new Error("User not found");
 
 		return user;
 	} catch (error) {
@@ -45,7 +45,7 @@ export async function deleteUser(clerkId: string) {
 		});
 
 		if (!userToDelete) {
-			throw new Error("User not found");
+			return new Error("User not found");
 		}
 
 		// Delete user
