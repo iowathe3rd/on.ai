@@ -17,6 +17,8 @@ export const reactFlowInstanceAtom = atom<ReactFlowInstance | null>(initialReact
 export const nodeChangesAtom = atom<NodeChange[]>(initialNodeChanges);
 export const edgeChangesAtom = atom<EdgeChange[]>(initialEdgeChanges);
 
+export const copiedNodeAtom = atom<CustomNode | null>(null);
+
 
 // Создание хранилища и добавление в него всех атомов
 export const editorStore = createStore();

@@ -4,6 +4,7 @@ import {Handle, NodeProps, NodeResizer, NodeToolbar, Position} from "reactflow";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import {CustomNode} from "@/types";
+import {copyNode} from "@/lib/editor/utils";
 
 export const Node = ({ id, data, selected }: CustomNode) => {
 	const [value, setValue] = useState(data.label);
@@ -17,6 +18,11 @@ export const Node = ({ id, data, selected }: CustomNode) => {
 		data.onDelete(id);
 	};
 
+
+	const handleCopy = () => {
+		copyNode(id);
+	};
+
 	return (
 		<div className='h-full p-2'>
 			<NodeResizer color="#ff0071" isVisible={selected} minWidth={100} minHeight={30} />
@@ -25,7 +31,7 @@ export const Node = ({ id, data, selected }: CustomNode) => {
 				<Button size={"sm"} variant={"outline"} onClick={handleDelete}>
 					delete
 				</Button>
-				<Button size={"sm"} variant={"outline"}>
+				<Button size={"sm"} variant={"outline"} onClick={handleCopy}>
 					copy
 				</Button>
 				<Button size={"sm"} variant={"outline"}>

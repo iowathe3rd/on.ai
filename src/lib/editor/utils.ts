@@ -1,5 +1,5 @@
 import { CustomNode } from "@/types";
-import {nodesAtom, editorStore} from "@/store/editor";
+import {nodesAtom, editorStore, copiedNodeAtom} from "@/store/editor";
 
 export const createNode = (data: Omit<CustomNode, "id">): void => {
 	const id = crypto.randomUUID();
@@ -26,4 +26,19 @@ export const changeNode = (id: string, value: string): void => {
 			node.id === id ? { ...node, data: { ...node.data, label: value } } : node
 		)
 	);
+};
+
+export const copyNode = (id: string) => {
+	const nodes = editorStore.get(nodesAtom);
+	const nodeToCopy = nodes.find(node => node.id === id);
+	editorStore.set(copiedNodeAtom, nodeToCopy ? { ...nodeToCopy, id: crypto.randomUUID() } : null);
+};
+
+export const pasteNode = (position: { x: number, y: number }) => {
+	const copiedNode = editorStore.get(copiedNodeAtom);
+	if (copiedNode) {
+		const newNode = { ...copiedNode, position };
+		editorStore.set(nodesAtom, (nodes) => [...nodes, newNode]);
+		editorStore.set(copiedNodeAtom, null); // Очистка буфера после вставки
+	}
 };
