@@ -21,7 +21,7 @@ export const Node = ({ id, data, selected }: CustomNode) => {
 		<div className='h-full p-2'>
 			<NodeResizer color="#ff0071" isVisible={selected} minWidth={100} minHeight={30} />
 
-			<NodeToolbar position={Position.Top} className='flex gap-2'>
+			<NodeToolbar position={Position.Top} className='flex gap-2 border border-border p-1 rounded-lg'>
 				<Button size={"sm"} variant={"outline"} onClick={handleDelete}>
 					delete
 				</Button>
