@@ -11,7 +11,7 @@ import {
 	useEdgeChangeHandler,
 	useNodeChangeHandler,
 } from "@/lib/editor/handlers";
-import { createNode } from "@/lib/editor/utils";
+import {changeNode, createNode, deleteNode} from "@/lib/editor/utils";
 import { edgesAtom, nodesAtom, reactFlowInstanceAtom } from "@/store/editor";
 import { useUser } from "@clerk/nextjs";
 import { useAtom } from "jotai";
@@ -21,7 +21,7 @@ import ReactFlow, {
 	Background,
 	BackgroundVariant,
 	Controls,
-	MiniMap,
+	MiniMap, NodeTypes,
 	OnConnect,
 	ReactFlowProvider,
 } from "reactflow";
@@ -60,6 +60,8 @@ export default function EditorPage() {
 				type: "node-with-toolbar",
 				data: {
 					label: "Начните писать...",
+					onDelete: deleteNode,
+					onChange: changeNode
 				},
 				position: position,
 			});
@@ -108,7 +110,7 @@ export default function EditorPage() {
 					ref={reactFlowWrapper}
 				>
 					<ReactFlow
-						nodeTypes={nodeTypes}
+						nodeTypes={nodeTypes as unknown as NodeTypes}
 						nodes={nodes}
 						edges={edges}
 						onNodesChange={handleNodesChange}

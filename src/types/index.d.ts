@@ -10,8 +10,8 @@ declare interface CreateUserParams {
 
 declare interface NodeData {
 	label: string;
-	onChange?: (id: string, value: string) => void;
-	onDelete?: (id: string) => void;
+	onChange: (id: string, value: string) => void;
+	onDelete: (id: string) => void;
 }
 
 declare interface CustomNode extends Node<NodeData, "node-with-toolbar"> {}

@@ -17,14 +17,12 @@ export const createNode = (data: Omit<CustomNode, "id">): void => {
 	);
 };
 export const deleteNode = (id: string): void => {
-	editorStore.set(nodesAtom, (prevNodes: CustomNode[]) =>
-		prevNodes.filter((node) => node.id !== id)
-	);
+	editorStore.set(nodesAtom, (nds) => nds.filter((node) => node.id !== id));
 };
 
 export const changeNode = (id: string, value: string): void => {
-	editorStore.set(nodesAtom, (prevNodes: CustomNode[]) =>
-		prevNodes.map((node) =>
+	editorStore.set(nodesAtom, (nds) =>
+		nds.map((node) =>
 			node.id === id ? { ...node, data: { ...node.data, label: value } } : node
 		)
 	);

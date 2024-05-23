@@ -1,21 +1,11 @@
 "use client";
-import { ChangeEvent, useState } from "react";
-import { Handle, NodeToolbar, Position } from "reactflow";
+import {ChangeEvent, ComponentType, useState} from "react";
+import {Handle, NodeProps, NodeResizer, NodeToolbar, Position} from "reactflow";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
+import {CustomNode} from "@/types";
 
-interface NodeData {
-	label: string;
-	onChange: (id: string, value: string) => void;
-	onDelete: (id: string) => void;
-}
-
-interface NodeProps {
-	id: string;
-	data: NodeData;
-}
-
-export const Node = ({ id, data }: NodeProps) => {
+export const Node = ({ id, data, selected }: CustomNode) => {
 	const [value, setValue] = useState(data.label);
 
 	const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
@@ -28,7 +18,9 @@ export const Node = ({ id, data }: NodeProps) => {
 	};
 
 	return (
-		<div className='border border-border rounded-lg h-fit'>
+		<div className='h-full p-2'>
+			<NodeResizer color="#ff0071" isVisible={selected} minWidth={100} minHeight={30} />
+
 			<NodeToolbar position={Position.Top} className='flex gap-2'>
 				<Button size={"sm"} variant={"outline"} onClick={handleDelete}>
 					delete
@@ -40,7 +32,7 @@ export const Node = ({ id, data }: NodeProps) => {
 					paste
 				</Button>
 			</NodeToolbar>
-			<Textarea value={value} onChange={handleChange} className='w-full mt-2' />
+			<Textarea value={value} onChange={handleChange} className='w-full h-full resize-none' />
 
 			<Handle type='target' position={Position.Left} />
 			<Handle type='source' position={Position.Right} />

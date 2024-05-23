@@ -3,7 +3,7 @@ import { DragEvent, useCallback, useState } from "react";
 import { Panel, useReactFlow } from "reactflow";
 import { Button } from "../ui/button";
 import { Menubar } from "../ui/menubar";
-import {createNode} from "@/lib/editor/utils";
+import {changeNode, createNode, deleteNode} from "@/lib/editor/utils";
 
 interface Tool {
 	name: string;
@@ -55,7 +55,9 @@ export default function Blocks() {
 					onClick={()=>createNode({
 						position: {x: 0, y:0},
 						data: {
-							label: "HT"
+							label: "HT",
+							onChange: changeNode,
+							onDelete: deleteNode
 						}
 					})}
 					draggable
