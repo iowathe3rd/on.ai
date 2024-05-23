@@ -3,21 +3,31 @@ import { EditorState } from "@/types";
 import prisma from "../db";
 import { handleError } from "../utils";
 import {Diagram} from "@prisma/client";
+import {redirect} from "next/navigation";
 
 type UpdateDiagramInput = {
 	data: EditorState;
 	name: string;
-	userId: string;
+	clerkId: string;
 };
 
 type CreateDiagramInput = Omit<UpdateDiagramInput, "data">;
 
-export async function createDiagram(input: CreateDiagramInput): Promise<Diagram | undefined> {
+export async function createDiagram(input: CreateDiagramInput){
+	let diagram;
 	try {
-		return await prisma.diagram.create({
+		const user = await prisma.user.findUnique({
+			where: {
+				clerkId: input.clerkId
+			}
+		})
+		if(!user) {
+			throw Error("User not found");
+		}
+		diagram =  await prisma.diagram.create({
 			data: {
 				name: input.name,
-				userId: input.userId,
+				userId: user.id,
 				data: [],
 			},
 		});
@@ -26,6 +36,8 @@ export async function createDiagram(input: CreateDiagramInput): Promise<Diagram 
 		console.log(error);
 		handleError(error);
 	}
+	redirect(`/editor/${diagram!.id}`);
+
 }
 
 export async function updateDiagram(input: UpdateDiagramInput): Promise<Diagram | undefined> {
@@ -36,7 +48,11 @@ export async function updateDiagram(input: UpdateDiagramInput): Promise<Diagram 
 			data: {
 				name: input.name,
 				data: JSON.stringify(input.data),
-				userId: input.userId,
+				user: {
+					connect: {
+						clerkId: input.clerkId
+					}
+				},
 			},
 		});
 	} catch (error) {

@@ -45,10 +45,9 @@ export default function NewDiagram() {
 			// Вызываем функцию создания диаграммы, передавая в неё данные из формы
 			const diagram = await createDiagram({
 				name: values.name,
-				userId: user!.id,
+				clerkId: user!.id
 			});
 			console.log("Диаграмма успешно создана:", diagram);
-			redirect(`/editor/${diagram!.id}`)
 		} catch (error) {
 			// Обрабатываем ошибку, если создание диаграммы не удалось
 			console.error("Ошибка при создании диаграммы:", error);
