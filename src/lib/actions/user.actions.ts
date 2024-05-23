@@ -2,62 +2,62 @@
 import { revalidatePath } from "next/cache";
 import prisma from "../db";
 import { handleError } from "../utils";
+import { CreateUserParams } from "@/types";
+import { User } from "@prisma/client";
 
-export async function createUser(user: CreateUserParams) {
-  try {
-    const newUser = await prisma.user.create({
-      data: {
-        clerkId: user.clerkId,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        username: user.username,
-      }
-    });
-
-    return JSON.parse(JSON.stringify(newUser));
-  } catch (error) {
-    handleError(error);
-  }
+export async function createUser(
+	user: CreateUserParams
+): Promise<User | undefined> {
+	try {
+		return await prisma.user.create({
+			data: {
+				clerkId: user.clerkId,
+				email: user.email,
+				firstName: user.firstName,
+				lastName: user.lastName,
+				username: user.username,
+			},
+		});
+	} catch (error) {
+		handleError(error);
+	}
 }
 
 export async function getUserById(userId: string) {
-  try {
+	try {
+		const user = await prisma.user.findUnique({ where: { clerkId: userId } });
 
-    const user = await prisma.user.findUnique({ where: { clerkId: userId } });
+		if (!user) throw new Error("User not found");
 
-    if (!user) throw new Error('User not found');
-
-    return user;
-  } catch (error) {
-    handleError(error);
-  }
+		return user;
+	} catch (error) {
+		handleError(error);
+	}
 }
 
 export async function deleteUser(clerkId: string) {
-  try {
+	try {
+		// Find user to delete
+		const userToDelete = await prisma.user.findUnique({
+			where: {
+				clerkId: clerkId,
+			},
+		});
 
-    // Find user to delete
-    const userToDelete = await prisma.user.findUnique({
-      where: {
-        clerkId: clerkId
-      }
-    });
+		if (!userToDelete) {
+			throw new Error("User not found");
+		}
 
-    if (!userToDelete) {
-      throw new Error('User not found');
-    }
+		// Delete user
+		const deletedUser = await prisma.user.delete({
+			where: {
+				clerkId: clerkId,
+			},
+		});
+		revalidatePath("/");
 
-    // Delete user
-    const deletedUser = await prisma.user.delete({
-      where: {
-        clerkId: clerkId
-      }
-    });
-    revalidatePath('/');
-
-    return deletedUser;
-  } catch (error) {
-    handleError(error);
-  }
+		return deletedUser;
+	} catch (error) {
+		handleError(error);
+	}
 }

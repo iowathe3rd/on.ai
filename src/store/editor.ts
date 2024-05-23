@@ -1,6 +1,6 @@
-import { CustomNode } from '@/types';
-import { atom } from 'jotai';
-import { Edge, EdgeChange, NodeChange, ReactFlowInstance } from 'reactflow';
+import { CustomNode } from "@/types";
+import { atom } from "jotai";
+import { Edge, EdgeChange, NodeChange, ReactFlowInstance } from "reactflow";
 
 const initialNodes: CustomNode[] = [];
 

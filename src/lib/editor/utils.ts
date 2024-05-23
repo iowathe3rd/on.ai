@@ -1,33 +1,34 @@
 import { CustomNode } from "@/types";
-import { randomUUID } from "node:crypto";
-import { Position, XYPosition } from "reactflow";
+import { useAtom } from "jotai/index";
+import { nodesAtom } from "@/store/editor";
 
-interface CreateNodeInput {
-  label: string;
-  type: "default" | "node-with-toolbar";
-  position: XYPosition,
-  onChange: (id: string, value: string) => void;
-  onDelete: (id: string) => void;
-  sourcePosition?: Position;
-  targetPosition?: Position;
+export const createNode = (data: Omit<CustomNode, "id">): void => {
+	const [nodes, setNodes] = useAtom(nodesAtom);
+	const id = crypto.randomUUID();
+	setNodes((nds: CustomNode[]) =>
+		nds.concat({
+			...data,
+			id: id,
+			data: {
+				label: "Начните писать",
+				onChange: changeNode,
+				onDelete: deleteNode,
+			},
+			type: "node-with-toolbar",
+		})
+	);
+};
 
-}
+export const deleteNode = (id: string): void => {
+	const [nodes, setNodes] = useAtom(nodesAtom);
+	setNodes((nds) => nds.filter((node) => node.id !== id));
+};
 
-export const createNode = (params: CreateNodeInput): CustomNode => {
-  const id = randomUUID();
-  const { label, onChange, onDelete, type = 'node-with-toolbar', position } = params;
-
-  return {
-    id,
-    type,
-    position,
-    data: {
-      label: label,
-      onChange,
-      onDelete,
-      sourcePosition: params.sourcePosition
-    },
-    sourcePosition: Position.Right,
-    targetPosition: Position.Left,
-  };
+export const changeNode = (id: string, value: string): void => {
+	const [nodes, setNodes] = useAtom(nodesAtom);
+	setNodes((nds) =>
+		nds.map((node) =>
+			node.id === id ? { ...node, data: { ...node.data, label: value } } : node
+		)
+	);
 };
