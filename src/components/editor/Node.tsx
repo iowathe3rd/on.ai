@@ -1,21 +1,21 @@
 "use client";
-import { ChangeEvent, useState } from "react";
-import { Handle, NodeResizer, NodeToolbar, Position } from "reactflow";
+import {ChangeEvent, ComponentType, useState} from "react";
+import {Handle, NodeProps, NodeToolbar, NodeTypes, Position} from "reactflow";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import { CustomNode } from "@/types";
-import { copyNode } from "@/lib/editor/handlers";
+import {changeNode, copyNode, deleteNode} from "@/lib/editor/handlers";
 
 export const Node = (props: CustomNode) => {
 	const [value, setValue] = useState(props.data.label);
 
 	const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
 		setValue(event.target.value);
-		props.onChange(props.id, event.target.value);
+		changeNode(props.id, event.target.value);
 	};
 
 	const handleDelete = () => {
-		props.onDelete(props.id);
+		deleteNode(props.id);
 	};
 
 	const handleCopy = () => {
@@ -23,17 +23,11 @@ export const Node = (props: CustomNode) => {
 	};
 
 	return (
-		<div className='h-full p-2'>
-			<NodeResizer
-				color='#ff0071'
-				isVisible={props.selected}
-				minWidth={100}
-				minHeight={30}
-			/>
+		<div className='h-full p-0'>
 
 			<NodeToolbar
 				position={Position.Top}
-				className='flex gap-2 border border-border p-1 rounded-lg'
+				className='flex gap-2 border border-border rounded-lg'
 			>
 				<Button size={"sm"} variant={"outline"} onClick={handleDelete}>
 					delete
@@ -48,7 +42,7 @@ export const Node = (props: CustomNode) => {
 			<Textarea
 				value={value}
 				onChange={handleChange}
-				className='w-full h-full resize-none'
+				className='w-full h-full resize-none min-h-[100px]'
 			/>
 
 			<Handle type='target' position={Position.Left} />
@@ -57,6 +51,6 @@ export const Node = (props: CustomNode) => {
 	);
 };
 
-export const nodeTypes = {
-	"node-with-toolbar": Node,
+export const nodeTypes: NodeTypes = {
+	"default": Node as unknown as ComponentType<NodeProps>,
 };

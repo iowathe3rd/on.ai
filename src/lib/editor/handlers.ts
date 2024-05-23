@@ -1,6 +1,5 @@
 import { CustomNode } from "@/types";
 import { nodesAtom, editorStore, copiedNodeAtom } from "@/store/editor";
-import crypto from "crypto";
 
 export const createNode = (
 	data: Omit<CustomNode, "id" | "onDelete" | "onChange">
@@ -13,7 +12,6 @@ export const createNode = (
 			data: {
 				label: "Начните писать",
 			},
-			type: "node-with-toolbar",
 			onDelete: deleteNode,
 			onChange: changeNode,
 		})

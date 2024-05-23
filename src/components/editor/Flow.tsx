@@ -3,7 +3,7 @@ import ReactFlow, {
 	addEdge,
 	Background,
 	BackgroundVariant,
-	Controls,
+	Controls, EdgeTypes,
 	MiniMap,
 	NodeTypes,
 	OnConnect,
@@ -11,9 +11,9 @@ import ReactFlow, {
 } from "reactflow";
 import Blocks from "@/components/editor/Blocks";
 import Toolbar from "@/components/editor/Toolbar";
-import { nodeTypes } from "@/components/editor/Node";
+import {Node, nodeTypes} from "@/components/editor/Node";
 import { edgesAtom, nodesAtom } from "@/store/editor";
-import { DragEventHandler, useCallback, useEffect } from "react";
+import {DragEventHandler, useCallback, useEffect, useRef} from "react";
 import { useAtom } from "jotai";
 import {
 	ContextMenu,
@@ -28,14 +28,17 @@ import {
 	useNodeChangeHandler,
 } from "@/lib/editor/utils";
 import { createNode } from "@/lib/editor/handlers";
+import ConnectionLine from "@/components/editor/ConnectionLine";
 
 export default function Flow() {
+	const reactFlowWrapper = useRef(null);
+
 	const { screenToFlowPosition } = useReactFlow();
 	const [nodes, setNodes] = useAtom(nodesAtom);
 	const [edges, setEdges] = useAtom(edgesAtom);
 
 	const onConnect: OnConnect = useCallback(
-		(params) => setEdges((eds) => addEdge(params, eds)),
+		(params) => setEdges((eds) => [...eds, ...addEdge(params, eds)]),
 		[setEdges]
 	);
 
@@ -48,15 +51,16 @@ export default function Flow() {
 		(event) => {
 			event.preventDefault();
 			const type = event.dataTransfer.getData("application/reactflow");
-			if (!type) return;
 
+			if (typeof type === 'undefined' || !type) {
+				return;
+			}
 			const position = screenToFlowPosition({
 				x: event.clientX,
 				y: event.clientY,
 			});
 
 			createNode({
-				type: "node-with-toolbar",
 				data: {
 					label: "Начните писать...",
 				},
@@ -85,26 +89,25 @@ export default function Flow() {
 	return (
 		<ContextMenu>
 			<ContextMenuTrigger className='flex w-full h-full'>
-				<div className='w-full h-full'>
-					<div className='reactflow-wrapper w-full h-screen'>
-						<ReactFlow
-							nodeTypes={nodeTypes as unknown as NodeTypes}
-							nodes={nodes}
-							edges={edges}
-							onNodesChange={handleNodesChange}
-							onEdgesChange={handleEdgesChange}
-							onConnect={onConnect}
-							onDrop={onDrop}
-							onDragOver={onDragOver}
-							fitView
-						>
-							<Controls />
-							<Blocks />
-							<Toolbar />
-							<MiniMap nodeStrokeWidth={3} zoomable pannable />
-							<Background color='#ccc' variant={BackgroundVariant.Dots} />
-						</ReactFlow>
-					</div>
+				<div ref={reactFlowWrapper} className='w-full h-full'>
+					<ReactFlow
+						nodeTypes={nodeTypes}
+						nodes={nodes}
+						edges={edges}
+						onNodesChange={handleNodesChange}
+						onEdgesChange={handleEdgesChange}
+						onConnect={onConnect}
+						onDrop={onDrop}
+						onDragOver={onDragOver}
+						connectionLineComponent={ConnectionLine}
+						fitView
+					>
+						<Controls />
+						<Blocks />
+						<Toolbar />
+						<MiniMap nodeStrokeWidth={3} zoomable pannable />
+						<Background color='#ccc' variant={BackgroundVariant.Dots} />
+					</ReactFlow>
 				</div>
 			</ContextMenuTrigger>
 			<ContextMenuContent className='w-64'></ContextMenuContent>

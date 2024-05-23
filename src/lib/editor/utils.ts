@@ -11,7 +11,7 @@ import {
 	nodeChangesAtom,
 	nodesAtom,
 } from "@/store/editor";
-import { CustomNode } from "@/types";
+import {CustomEdge, CustomNode} from "@/types";
 
 export const useNodeChangeHandler = () => {
 	const [, setNodes] = useAtom(nodesAtom);
@@ -31,7 +31,7 @@ export const useEdgeChangeHandler = () => {
 	const [, setEdgeChanges] = useAtom(edgeChangesAtom);
 
 	return (changes: EdgeChange[]) => {
-		setEdges((edges) => applyEdgeChanges(changes, edges));
+		setEdges((edges) => applyEdgeChanges(changes, edges) as CustomEdge[]);
 		setEdgeChanges(changes);
 	};
 };

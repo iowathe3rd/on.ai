@@ -1,17 +1,17 @@
-import { CustomNode } from "@/types";
+import {CustomEdge, CustomNode} from "@/types";
 import { atom, createStore } from "jotai";
 import { Edge, EdgeChange, NodeChange, ReactFlowInstance } from "reactflow";
 
 // Исходные состояния для узлов, рёбер, инстанса React Flow, истории изменений узлов и рёбер
 const initialNodes: CustomNode[] = [];
-const initialEdges: Edge[] = [];
+const initialEdges: CustomEdge[] = [];
 const initialReactFlowInstance: ReactFlowInstance | null = null;
 const initialNodeChanges: NodeChange[] = [];
 const initialEdgeChanges: EdgeChange[] = [];
 
 // Создание атомов для всех состояний
 export const nodesAtom = atom<CustomNode[]>(initialNodes);
-export const edgesAtom = atom<Edge[]>(initialEdges);
+export const edgesAtom = atom<CustomEdge[]>(initialEdges);
 export const reactFlowInstanceAtom = atom<ReactFlowInstance | null>(
 	initialReactFlowInstance
 );
