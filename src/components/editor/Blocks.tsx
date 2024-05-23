@@ -3,6 +3,7 @@ import { DragEvent, useCallback, useState } from "react";
 import { Panel, useReactFlow } from "reactflow";
 import { Button } from "../ui/button";
 import { Menubar } from "../ui/menubar";
+import {createNode} from "@/lib/editor/utils";
 
 interface Tool {
 	name: string;
@@ -51,6 +52,12 @@ export default function Blocks() {
 					variant={"ghost"}
 					size={"sm"}
 					onDragStart={(event) => onDragStart(event)}
+					onClick={()=>createNode({
+						position: {x: 0, y:0},
+						data: {
+							label: "HT"
+						}
+					})}
 					draggable
 				>
 					<Image width={20} height={20} src={"/icons/plus.svg"} alt={"add"} />

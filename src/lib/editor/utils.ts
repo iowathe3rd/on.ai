@@ -1,12 +1,10 @@
 import { CustomNode } from "@/types";
-import { useAtom } from "jotai/index";
-import { nodesAtom } from "@/store/editor";
+import {nodesAtom, editorStore} from "@/store/editor";
 
 export const createNode = (data: Omit<CustomNode, "id">): void => {
-	const [nodes, setNodes] = useAtom(nodesAtom);
 	const id = crypto.randomUUID();
-	setNodes((nds: CustomNode[]) =>
-		nds.concat({
+	editorStore.set(nodesAtom, (prevNodes: CustomNode[]) =>
+		prevNodes.concat({
 			...data,
 			id: id,
 			data: {
@@ -18,16 +16,15 @@ export const createNode = (data: Omit<CustomNode, "id">): void => {
 		})
 	);
 };
-
 export const deleteNode = (id: string): void => {
-	const [nodes, setNodes] = useAtom(nodesAtom);
-	setNodes((nds) => nds.filter((node) => node.id !== id));
+	editorStore.set(nodesAtom, (prevNodes: CustomNode[]) =>
+		prevNodes.filter((node) => node.id !== id)
+	);
 };
 
 export const changeNode = (id: string, value: string): void => {
-	const [nodes, setNodes] = useAtom(nodesAtom);
-	setNodes((nds) =>
-		nds.map((node) =>
+	editorStore.set(nodesAtom, (prevNodes: CustomNode[]) =>
+		prevNodes.map((node) =>
 			node.id === id ? { ...node, data: { ...node.data, label: value } } : node
 		)
 	);

@@ -89,7 +89,7 @@ export default function EditorPage() {
 			await updateDiagram({
 				name: "",
 				data: state,
-				userId: user!.id,
+				clerkId: user!.id,
 			});
 		};
 
