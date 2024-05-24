@@ -1,17 +1,18 @@
-import { useAtom } from "jotai";
-import {
-	applyEdgeChanges,
-	applyNodeChanges,
-	EdgeChange,
-	NodeChange,
-} from "reactflow";
 import {
 	edgeChangesAtom,
 	edgesAtom,
 	nodeChangesAtom,
 	nodesAtom,
 } from "@/store/editor";
-import {CustomEdge, CustomNode} from "@/types";
+import { CustomNode } from "@/types";
+import { useAtom } from "jotai";
+import {
+	Edge,
+	EdgeChange,
+	NodeChange,
+	applyEdgeChanges,
+	applyNodeChanges,
+} from "reactflow";
 
 export const useNodeChangeHandler = () => {
 	const [, setNodes] = useAtom(nodesAtom);
@@ -31,7 +32,7 @@ export const useEdgeChangeHandler = () => {
 	const [, setEdgeChanges] = useAtom(edgeChangesAtom);
 
 	return (changes: EdgeChange[]) => {
-		setEdges((edges) => applyEdgeChanges(changes, edges) as CustomEdge[]);
+		setEdges((edges) => applyEdgeChanges(changes, edges) as Edge[]);
 		setEdgeChanges(changes);
 	};
 };

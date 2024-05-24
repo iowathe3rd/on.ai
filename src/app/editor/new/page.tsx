@@ -19,17 +19,19 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { createDiagram } from "@/lib/actions/editor.actions";
 import { useUser } from "@clerk/nextjs";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const formSchema = z.object({
 	name: z.string().min(2).max(50),
 });
 
 export default function NewDiagram() {
+	const router = useRouter();
 	const { user } = useUser();
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -41,15 +43,25 @@ export default function NewDiagram() {
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
-			// Вызываем функцию создания диаграммы, передавая в неё данные из формы
 			const diagram = await createDiagram({
 				name: values.name,
 				clerkId: user!.id,
 			});
-			console.log("Диаграмма успешно создана:", diagram);
+
+			if (!diagram || !("id" in diagram)) {
+				form.setError("root", {
+					message: "Что-то пошло не так",
+				});
+				return;
+			}
+
+			router.push(`/editor/${diagram.id}`);
+			console.log("Диаграмма успешно создана");
 		} catch (error) {
-			// Обрабатываем ошибку, если создание диаграммы не удалось
 			console.error("Ошибка при создании диаграммы:", error);
+			form.setError("root", {
+				message: "Ошибка при создании диаграммы",
+			});
 		}
 	}
 	return (

@@ -1,41 +1,41 @@
 "use client";
-import ReactFlow, {
-	addEdge,
-	Background,
-	BackgroundVariant,
-	Controls, EdgeTypes,
-	MiniMap,
-	NodeTypes,
-	OnConnect,
-	useReactFlow,
-} from "reactflow";
 import Blocks from "@/components/editor/Blocks";
-import Toolbar from "@/components/editor/Toolbar";
-import {Node, nodeTypes} from "@/components/editor/Node";
-import { edgesAtom, nodesAtom } from "@/store/editor";
-import {DragEventHandler, useCallback, useEffect, useRef} from "react";
-import { useAtom } from "jotai";
-import {
-	ContextMenu,
-	ContextMenuContent,
-	ContextMenuTrigger,
-} from "../ui/context-menu";
-import {
-	loadStateFromLocalStorage,
-	LOCAL_STORAGE_KEY,
-	saveStateToLocalStorage,
-	useEdgeChangeHandler,
-	useNodeChangeHandler,
-} from "@/lib/editor/utils";
-import { createNode } from "@/lib/editor/handlers";
 import ConnectionLine from "@/components/editor/ConnectionLine";
+import { nodeTypes } from "@/components/editor/Node";
+import Toolbar from "@/components/editor/Toolbar";
+import { createNode } from "@/lib/editor/handlers";
+import {
+    LOCAL_STORAGE_KEY,
+    loadStateFromLocalStorage,
+    useEdgeChangeHandler,
+    useNodeChangeHandler,
+} from "@/lib/editor/utils";
+import { edgesAtom, nodesAtom } from "@/store/editor";
+import { useAtom } from "jotai";
+import { DragEventHandler, useCallback, useEffect, useRef, useState } from "react";
+import ReactFlow, {
+    Background,
+    BackgroundVariant,
+    Controls,
+    MiniMap,
+    OnConnect,
+    addEdge,
+    useReactFlow,
+} from "reactflow";
+import {
+    ContextMenu,
+    ContextMenuContent,
+    ContextMenuTrigger,
+} from "../ui/context-menu";
 
-export default function Flow() {
+export default function Flow({id}: {id: string}) {
 	const reactFlowWrapper = useRef(null);
 
 	const { screenToFlowPosition } = useReactFlow();
 	const [nodes, setNodes] = useAtom(nodesAtom);
 	const [edges, setEdges] = useAtom(edgesAtom);
+ const [isLoadedFromLocalStorage, setIsLoadedFromLocalStorage] = useState(false);
+
 
 	const onConnect: OnConnect = useCallback(
 		(params) => setEdges((eds) => [...eds, ...addEdge(params, eds)]),
@@ -73,18 +73,16 @@ export default function Flow() {
 	const handleNodesChange = useNodeChangeHandler();
 	const handleEdgesChange = useEdgeChangeHandler();
 
-	useEffect(() => {
-		const savedState = loadStateFromLocalStorage(LOCAL_STORAGE_KEY);
-		if (savedState) {
-			setNodes(savedState.nodes);
-			setEdges(savedState.edges);
-		}
-	}, [setNodes, setEdges]);
+	// Загружаем состояние из Local Storage при первой загрузке компонента
+    useEffect(() => {
+        const savedState = loadStateFromLocalStorage(LOCAL_STORAGE_KEY);
+        if (savedState && !isLoadedFromLocalStorage) {
+            setNodes(savedState.nodes);
+            setEdges(savedState.edges);
+            setIsLoadedFromLocalStorage(true);
+        }
+    }, [setNodes, setEdges, isLoadedFromLocalStorage]);
 
-	useEffect(() => {
-		const state = { nodes, edges };
-		saveStateToLocalStorage(LOCAL_STORAGE_KEY, state);
-	}, [nodes, edges]);
 
 	return (
 		<ContextMenu>
@@ -104,7 +102,7 @@ export default function Flow() {
 					>
 						<Controls />
 						<Blocks />
-						<Toolbar />
+						<Toolbar id={id}/>
 						<MiniMap nodeStrokeWidth={3} zoomable pannable />
 						<Background color='#ccc' variant={BackgroundVariant.Dots} />
 					</ReactFlow>

@@ -1,19 +1,19 @@
 "use client";
 
 import {
-	Menubar,
-	MenubarContent,
-	MenubarItem,
-	MenubarMenu,
-	MenubarSeparator,
-	MenubarShortcut,
-	MenubarTrigger,
+    Menubar,
+    MenubarContent,
+    MenubarItem,
+    MenubarMenu,
+    MenubarSeparator,
+    MenubarShortcut,
+    MenubarTrigger,
 } from "@/components/ui/menubar";
-import { cn } from "@/lib/utils";
-import { Panel } from "reactflow";
 import { updateDiagram } from "@/lib/actions/editor.actions";
+import { cn } from "@/lib/utils";
 import { edgesAtom, editorStore, nodesAtom } from "@/store/editor";
 import { useUser } from "@clerk/nextjs";
+import { Panel } from "reactflow";
 
 interface Actions {
 	name: string;
@@ -27,7 +27,7 @@ interface ActionsGroup {
 	tools: Actions[];
 }
 
-export default function Toolbar() {
+export default function Toolbar({ id }: { id: string }) {
 	const { user } = useUser();
 	const state = {
 		nodes: editorStore.get(nodesAtom),
@@ -36,11 +36,11 @@ export default function Toolbar() {
 
 	const saveHandler = async () => {
 		await updateDiagram({
-			name: "",
+			id: id,
 			data: state,
-			clerkId: user!.id,
 		});
 	};
+
 	const actions: ActionsGroup[] = [
 		{
 			title: "File",
@@ -81,7 +81,7 @@ export default function Toolbar() {
 									className={cn(`bg-${tool.color}`)}
 									onClick={() => tool.handler()}
 								>
-									{tool.name}{" "}
+									s{tool.name}{" "}
 									{tool.shortcut && (
 										<MenubarShortcut>{tool.shortcut}</MenubarShortcut>
 									)}

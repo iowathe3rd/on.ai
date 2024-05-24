@@ -1,20 +1,24 @@
 "use server";
 import { EditorState } from "@/types";
+import { Diagram } from "@prisma/client";
 import prisma from "../db";
 import { handleError } from "../utils";
-import { Diagram } from "@prisma/client";
-import { redirect } from "next/navigation";
 
 type UpdateDiagramInput = {
-	data: EditorState;
+	id: string;
+	data?: EditorState;
+	name?: string;
+	clerkId?: string;
+};
+
+type CreateDiagramInput = {
+	data?: EditorState;
 	name: string;
 	clerkId: string;
 };
 
-type CreateDiagramInput = Omit<UpdateDiagramInput, "data">;
-
 export async function createDiagram(input: CreateDiagramInput) {
-	let diagram;
+	"use server";
 	try {
 		const user = await prisma.user.findUnique({
 			where: {
@@ -22,43 +26,45 @@ export async function createDiagram(input: CreateDiagramInput) {
 			},
 		});
 		if (!user) {
-			return Error("User not found");
+			throw new Error("User not found");
 		}
-		diagram = await prisma.diagram.create({
+		const diagram = await prisma.diagram.create({
 			data: {
 				name: input.name,
 				userId: user.id,
 				data: [],
 			},
 		});
+
+		return diagram;
 	} catch (error) {
 		// Обрабатываем ошибку, если сохранение не удалось
 		console.log(error);
 		handleError(error);
+		throw error; // важно выбрасывать ошибку, а не возвращать объект ошибки
 	}
-	redirect(`/editor/${diagram!.id}`);
 }
 
 export async function updateDiagram(
 	input: UpdateDiagramInput
 ): Promise<Diagram | undefined> {
+	"use server";
 	try {
 		// Создаем новую диаграмму в базе данных
 		// Возвращаем результат сохранения
-		return await prisma.diagram.create({
+		const diagram = await prisma.diagram.update({
+			where: {
+				id: input.id,
+			},
 			data: {
-				name: input.name,
 				data: JSON.stringify(input.data),
-				user: {
-					connect: {
-						clerkId: input.clerkId,
-					},
-				},
 			},
 		});
+		return JSON.parse(JSON.stringify(diagram));
 	} catch (error) {
 		// Обрабатываем ошибку, если сохранение не удалось
 		console.log(error);
 		handleError(error);
+		throw error; // важно выбрасывать ошибку, а не возвращать объект ошибки
 	}
 }
